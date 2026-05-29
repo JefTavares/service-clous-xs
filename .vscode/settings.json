@@ -1,0 +1,13 @@
+{
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/.sf": true,
+    "**/.sfdx": true
+  },
+  "xml.preferences.showSchemaDocumentationType": "none",
+  "analyticsdx-vscode-core.CLI.checkForPlugin": false,
+  "cSpell.words": [
+    "Apolices"
+  ]
+}

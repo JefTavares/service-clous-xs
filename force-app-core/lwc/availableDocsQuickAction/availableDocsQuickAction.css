@@ -1,0 +1,21 @@
+.custom-form-buttons{
+    text-align: right;
+    padding: 0 4px;
+    margin-top: 10px;
+}
+
+.custom-flex{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.custom-flex .email-input-field{
+    width: 40%;
+    margin-left: 15px;
+}
+
+.custom-flex .reason-input-field{
+    width: 20%;
+    margin-left: 15px;
+}
