@@ -1,200 +1,284 @@
+<!--
+  @description       : 
+  @author            : Jeferson Tavares
+  @group             : 
+  @last modified on  : 06-02-2026
+  @last modified by  : Jeferson Tavares
+-->
 <template>
-    <div class="slds-is-relative">
-        <lightning-quick-action-panel header="Documentos Disponíveis">
-            <template if:true={_isLoading}>
-                <lightning-spinner variant="brand" size="medium"></lightning-spinner>
+  <div class="slds-is-relative">
+    <lightning-quick-action-panel header="Documentos Disponíveis">
+      <template if:true={_isLoading}>
+        <lightning-spinner variant="brand" size="medium"></lightning-spinner>
+      </template>
+      <div class="slds-scrollable_x">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-scrollable_x installment-data">
+          <thead>
+            <tr class="slds-line-height_reset">
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Descrição">Descrição</div>
+              </th>
+              <template if:true={_isAfinidades}>
+                <th class="" scope="col">
+                  <div class="slds-truncate" title="Evento">Evento</div>
+                </th>
+                <th class="" scope="col">
+                  <div class="slds-truncate" title="Somente Carteirinha">Somente Carteirinha</div>
+                </th>
+              </template>
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Arquivo">Arquivo</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <template if:true={_isMassificado}>
+              <template for:each={_massificadosDocs} for:item="doc">
+                <tr class="slds-hint-parent" key={doc.id}>
+                  <td data-label="Descrição" scope="row">
+                    <div class="slds-truncate">
+                      <p>
+                        <lightning-input
+                          type="checkbox"
+                          label={doc.label}
+                          data-id={doc.id}
+                          checked={doc.enabled}
+                          onchange={handleMassificadosDocSelection}
+                        ></lightning-input>
+                      </p>
+                    </div>
+                  </td>
+                  <td data-label="Download" scope="row">
+                    <div class="slds-truncate">
+                      <a href={doc.url} lwc:if={doc.url} target="_blank">Download</a>
+                    </div>
+                  </td>
+                </tr>
+              </template>
             </template>
-            <div class="slds-scrollable_x">
-                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-scrollable_x installment-data">
-                    <thead>
-                        <tr class="slds-line-height_reset">
-                            <th class="" scope="col">
-                                <div class="slds-truncate" title="Descrição">Descrição</div>
-                            </th>
-                            <template if:true={_isAfinidades}>
-                                <th class="" scope="col">
-                                    <div class="slds-truncate" title="Evento">Evento</div>
-                                </th>
-                                <th class="" scope="col">
-                                    <div class="slds-truncate" title="Somente Carteirinha">Somente Carteirinha</div>
-                                </th>
-                            </template>
-                            <th class="" scope="col">
-                                <div class="slds-truncate" title="Arquivo">Arquivo</div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <template if:true={_isMassificado}>
-                            <template for:each={_massificadosDocs} for:item="doc">
-                                <tr class="slds-hint-parent" key={doc.id}>
-                                    <td data-label="Descrição" scope="row">
-                                        <div class="slds-truncate">
-                                            <p><lightning-input type="checkbox" label={doc.label} data-id={doc.id} checked={doc.enabled} onchange={handleMassificadosDocSelection}></lightning-input></p>
-                                        </div>
-                                    </td>
-                                    <td data-label="Download" scope="row">
-                                        <div class="slds-truncate">
-                                            <a href={doc.url} lwc:if={doc.url} target="_blank">Download</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </template>
-                        </template>
-                        <template if:true={_isAfinidades}>
-                            <template if:true={_afinidadesDocs} for:each={_afinidadesDocs} for:item="doc">
-                                <tr class="slds-hint-parent" key={doc.id}>
-                                    <td data-label="Descrição" scope="row">
-                                        <div class="slds-truncate">
-                                            <p><lightning-input type="checkbox" label={doc.nomeKit} data-id={doc.id} checked={doc.enabled} onchange={handleAfinidadesDocSelection}></lightning-input></p>
-                                        </div>
-                                    </td>
-                                    <td data-label="Evento" scope="row">
-                                        <div class="slds-truncate">
-                                            <p>{doc.eventDescription}</p>
-                                        </div>
-                                    </td>
-                                    <td data-label="Somente Carteirinha" scope="row">
-                                        <div class="slds-truncate">
-                                            <p>{doc.carteirinhaLabel}</p>
-                                        </div>
-                                    </td>
-                                    <td data-label="Download" scope="row">
-                                        <div class="slds-truncate">
-                                            <a href={doc.url} lwc:if={doc.url} target="_blank">Download</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </template>
-                        </template>
-                    </tbody>
-                </table>
-            </div>
-            <div class="send-method">
-                <div class="slds-section slds-is-open">
-                    <h3 class="slds-section__title">
-                        <button class="slds-button slds-section__title-action">
-                            <lightning-icon
+            <template if:true={_isAfinidades}>
+              <template if:true={_afinidadesDocs} for:each={_afinidadesDocs} for:item="doc">
+                <tr class="slds-hint-parent" key={doc.id}>
+                  <td data-label="Descrição" scope="row">
+                    <div class="slds-truncate">
+                      <p>
+                        <lightning-input
+                          type="checkbox"
+                          label={doc.nomeKit}
+                          data-id={doc.id}
+                          checked={doc.enabled}
+                          onchange={handleAfinidadesDocSelection}
+                        ></lightning-input>
+                      </p>
+                    </div>
+                  </td>
+                  <td data-label="Evento" scope="row">
+                    <div class="slds-truncate">
+                      <p>{doc.eventDescription}</p>
+                    </div>
+                  </td>
+                  <td data-label="Somente Carteirinha" scope="row">
+                    <div class="slds-truncate">
+                      <p>{doc.carteirinhaLabel}</p>
+                    </div>
+                  </td>
+                  <td data-label="Download" scope="row">
+                    <div class="slds-truncate">
+                      <a href={doc.url} lwc:if={doc.url} target="_blank">Download</a>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </template>
+          </tbody>
+        </table>
+      </div>
+      <div class="send-method">
+        <div class="slds-section slds-is-open">
+          <h3 class="slds-section__title">
+            <button class="slds-button slds-section__title-action">
+              <lightning-icon
+                icon-name="utility:switch"
+                class="slds-button__icon slds-button__icon_left slds-section__title-action-icon"
+                size="x-small"
+              ></lightning-icon>
+              <span class="slds-truncate" title="Formas de Envio">Formas de Envio</span>
+            </button>
+          </h3>
+          <div class="slds-section__content">
+            <template if:true={_isMassificado}>
+              <lightning-input label="Endereço de E-mail" type="email" lwc:ref="emailAddress"></lightning-input>
+            </template>
+            <template if:true={_isAfinidades}>
+              <div class="custom-flex">
+                <lightning-radio-group
+                  label="Método de envio"
+                  options={_afinidadesSendMethods}
+                  value={_afinidadesSelectedSendMethod}
+                  onchange={handleAfinidadesSendMethodChange}
+                  type="button"
+                >
+                </lightning-radio-group>
+                <template if:true={_isEmailFieldVisible}>
+                  <lightning-input
+                    class="email-input-field"
+                    label="Endereço de E-mail"
+                    type="email"
+                    lwc:ref="emailAddress"
+                  ></lightning-input>
+                </template>
+                <template if:true={_isAddressVisible}>
+                  <lightning-combobox
+                    label="Motivo"
+                    value={_afinidadesSelectedSendReasons}
+                    onchange={handleAfinidadesSendReasonsChange}
+                    options={_afinidadesSendReasons}
+                    class="reason-input-field"
+                  >
+                  </lightning-combobox>
+                </template>
+              </div>
+
+              <template if:true={_isAddressVisible}>
+                <ul class="slds-accordion">
+                  <template for:each={_afinidadesData.enderecos} for:item="endereco">
+                    <li class="slds-accordion__list-item" key={endereco.id}>
+                      <section class="slds-accordion__section slds-is-open">
+                        <div class="slds-accordion__summary">
+                          <h2 class="slds-accordion__summary-heading">
+                            <button
+                              class="slds-button slds-button_reset slds-accordion__summary-action"
+                              aria-controls={endereco.id}
+                              aria-expanded="true"
+                              title={endereco.label}
+                            >
+                              <lightning-icon
                                 icon-name="utility:switch"
                                 class="slds-button__icon slds-button__icon_left slds-section__title-action-icon"
                                 size="x-small"
-                            ></lightning-icon>
-                            <span class="slds-truncate" title="Formas de Envio">Formas de Envio</span>
-                        </button>
-                    </h3>
-                    <div class="slds-section__content">
-                        <template if:true={_isMassificado}>
-                            <lightning-input label="Endereço de E-mail" type="email" lwc:ref="emailAddress"></lightning-input>
-                        </template>
-                        <template if:true={_isAfinidades}>
-                            <div class="custom-flex">
-                                <lightning-radio-group
-                                    label="Método de envio"
-                                    options={_afinidadesSendMethods}
-                                    value={_afinidadesSelectedSendMethod}
-                                    onchange={handleAfinidadesSendMethodChange}
-                                    type="button"
-                                >
-                                </lightning-radio-group>
-                                <template if:true={_isEmailFieldVisible}>
-                                    <lightning-input class="email-input-field" label="Endereço de E-mail" type="email" lwc:ref="emailAddress"></lightning-input>
-                                </template>
-                                <template if:true={_isAddressVisible}>
-                                    <lightning-combobox
-                                        label="Motivo"
-                                        value={_afinidadesSelectedSendReasons}
-                                        onchange={handleAfinidadesSendReasonsChange}
-                                        options={_afinidadesSendReasons}
-                                        class="reason-input-field"
-                                    >
-                                    </lightning-combobox>
-                                </template>
+                              ></lightning-icon>
+                              <span class="slds-accordion__summary-content">{endereco.label}</span>
+                            </button>
+                          </h2>
+                        </div>
+                        <div class="slds-accordion__content" id={endereco.id}>
+                          <div class={endereco.class} role="list">
+                            <div class="slds-form__row">
+                              <div class="slds-form__item" role="listitem">
+                                <div class="slds-form-element_stacked">
+                                  <lightning-input
+                                    class="logradouro"
+                                    label="Endereço"
+                                    type="text"
+                                    value={endereco.logradouro}
+                                  ></lightning-input>
+                                </div>
+                              </div>
+                              <div class="slds-form__item" role="listitem">
+                                <div class="slds-form-element_stacked">
+                                  <lightning-input
+                                    class="numero"
+                                    label="Número"
+                                    type="text"
+                                    value={endereco.numero}
+                                  ></lightning-input>
+                                </div>
+                              </div>
                             </div>
-                            
-                            <template if:true={_isAddressVisible}>
-                                <ul class="slds-accordion">
-                                    <template for:each={_afinidadesData.enderecos} for:item="endereco">
-                                        <li class="slds-accordion__list-item" key={endereco.id}>
-                                            <section class="slds-accordion__section slds-is-open">
-                                                <div class="slds-accordion__summary">
-                                                    <h2 class="slds-accordion__summary-heading">
-                                                        <button class="slds-button slds-button_reset slds-accordion__summary-action" aria-controls={endereco.id} aria-expanded="true" title={endereco.label}>
-                                                            <lightning-icon
-                                                                icon-name="utility:switch"
-                                                                class="slds-button__icon slds-button__icon_left slds-section__title-action-icon"
-                                                                size="x-small"
-                                                            ></lightning-icon>
-                                                            <span class="slds-accordion__summary-content">{endereco.label}</span>
-                                                        </button>
-                                                    </h2>
-                                                </div>
-                                                <div class="slds-accordion__content" id={endereco.id}>
-                                                    <div class={endereco.class} role="list">
-                                                        <div class="slds-form__row">
-                                                            <div class="slds-form__item" role="listitem">
-                                                                <div class="slds-form-element_stacked">
-                                                                    <lightning-input class="logradouro" label="Endereço" type="text" value={endereco.logradouro}></lightning-input>
-                                                                </div>
-                                                            </div>
-                                                            <div class="slds-form__item" role="listitem">
-                                                                <div class="slds-form-element_stacked">
-                                                                    <lightning-input class="numero" label="Número" type="text" value={endereco.numero}></lightning-input>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="slds-form__row">
-                                                            <div class="slds-form__item" role="listitem">
-                                                                <div class="slds-form-element_stacked">
-                                                                    <lightning-input class="complemento" label="Complemento" type="text" value={endereco.complemento}></lightning-input>
-                                                                </div>
-                                                            </div>
-                                                            <div class="slds-form__item" role="listitem">
-                                                                <div class="slds-form-element_stacked">
-                                                                    <lightning-input class="bairro" label="Bairro" type="text" value={endereco.bairro}></lightning-input>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="slds-form__row">
-                                                            <div class="slds-form__item" role="listitem">
-                                                                <div class="slds-form-element_stacked">
-                                                                    <lightning-input class="cidade" label="Cidade" type="text" value={endereco.cidade}></lightning-input>
-                                                                </div>
-                                                            </div>
-                                                            <div class="slds-form__item" role="listitem">
-                                                                <div class="slds-form-element_stacked">
-                                                                    <lightning-input class="cep" label="CEP" type="text" value={endereco.cep}></lightning-input>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="slds-form__row">
-                                                            <div class="slds-form__item" role="listitem">
-                                                                <div class="slds-form-element_stacked">
-                                                                    <lightning-combobox class="estado" label="Estado" value={endereco.estado} options={_brazilianStates}></lightning-combobox>
-                                                                </div>
-                                                            </div>
-                                                            <div class="slds-form__item" role="listitem">
-                                                                <div class="slds-form-element_stacked">
-                                                                    <lightning-input class="pais" label="País" type="text" value={endereco.pais}></lightning-input>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="custom-form-buttons">
-                                                            <lightning-button label="Selecionar" class="select-address-button" variant="brand" data-id={endereco.id} onclick={handleSelectAddress}></lightning-button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </section>
-                                        </li>
-                                    </template>
-                                </ul>
-                            </template>
-                        </template>
-                    </div>
-                </div>
-            </div>
-            <div slot="footer">
-              <lightning-button variant="brand" label="Solicitar" class="slds-m-left_x-small" onclick={handleRequestDocs}></lightning-button>
-            </div>
-        </lightning-quick-action-panel>
-    </div>
+                            <div class="slds-form__row">
+                              <div class="slds-form__item" role="listitem">
+                                <div class="slds-form-element_stacked">
+                                  <lightning-input
+                                    class="complemento"
+                                    label="Complemento"
+                                    type="text"
+                                    value={endereco.complemento}
+                                  ></lightning-input>
+                                </div>
+                              </div>
+                              <div class="slds-form__item" role="listitem">
+                                <div class="slds-form-element_stacked">
+                                  <lightning-input
+                                    class="bairro"
+                                    label="Bairro"
+                                    type="text"
+                                    value={endereco.bairro}
+                                  ></lightning-input>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="slds-form__row">
+                              <div class="slds-form__item" role="listitem">
+                                <div class="slds-form-element_stacked">
+                                  <lightning-input
+                                    class="cidade"
+                                    label="Cidade"
+                                    type="text"
+                                    value={endereco.cidade}
+                                  ></lightning-input>
+                                </div>
+                              </div>
+                              <div class="slds-form__item" role="listitem">
+                                <div class="slds-form-element_stacked">
+                                  <lightning-input
+                                    class="cep"
+                                    label="CEP"
+                                    type="text"
+                                    value={endereco.cep}
+                                  ></lightning-input>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="slds-form__row">
+                              <div class="slds-form__item" role="listitem">
+                                <div class="slds-form-element_stacked">
+                                  <lightning-combobox
+                                    class="estado"
+                                    label="Estado"
+                                    value={endereco.estado}
+                                    options={_brazilianStates}
+                                  ></lightning-combobox>
+                                </div>
+                              </div>
+                              <div class="slds-form__item" role="listitem">
+                                <div class="slds-form-element_stacked">
+                                  <lightning-input
+                                    class="pais"
+                                    label="País"
+                                    type="text"
+                                    value={endereco.pais}
+                                  ></lightning-input>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="custom-form-buttons">
+                              <lightning-button
+                                label="Selecionar"
+                                class="select-address-button"
+                                variant="brand"
+                                data-id={endereco.id}
+                                onclick={handleSelectAddress}
+                              ></lightning-button>
+                            </div>
+                          </div>
+                        </div>
+                      </section>
+                    </li>
+                  </template>
+                </ul>
+              </template>
+            </template>
+          </div>
+        </div>
+      </div>
+      <div slot="footer">
+        <lightning-button
+          variant="brand"
+          label="Solicitar"
+          class="slds-m-left_x-small"
+          onclick={handleRequestDocs}
+        ></lightning-button>
+      </div>
+    </lightning-quick-action-panel>
+  </div>
 </template>

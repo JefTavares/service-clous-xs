@@ -1,10 +1,23 @@
 // Use .apex files to store anonymous Apex.
-// You can execute anonymous Apex in VS Code by selecting the
-//     apex text and running the command:
-//     SFDX: Execute Anonymous Apex with Currently Selected Text
-// You can also execute the entire file by running the command:
-//     SFDX: Execute Anonymous Apex with Editor Contents
 
-string tempvar = 'Enter_your_name_here';
-System.debug('Hello World!');
-System.debug('My name is ' + tempvar);
+String link = InstallmentController.getDuplicatePolicy(
+  '11032596',
+  '87304026',
+  '265758497',
+  '00077',
+  'jeferson.tavares@caixaresidencial.com.br',
+  'APOLICE'
+);
+
+System.debug('link>>' + link);
+
+
+12:17:12:291 USER_DEBUG [52]|DEBUG|Erro nos parametros de entrada:
+ idepol=0, 
+ numCert=87304026, 
+ numOper=265758497, 
+ numEndosso=0, 
+ moduloProduto=, 
+ mail=jeferson.tavares@caixaresidencial.com.br, 
+ tipoDoc=ENDOSSO, 
+ acessoPublico=0

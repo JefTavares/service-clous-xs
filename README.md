@@ -107,7 +107,7 @@ sf project retrieve start --source-dir force-app-financeiro
 sf project deploy start --source-dir force-app-financeiro
 ```
 
-Ativar o auto format dos códigos
+## Ativar o auto format dos códigos
 
 ```bash
 npm install --save-dev --save-exact prettier prettier-plugin-apex
@@ -136,3 +136,7 @@ Arquivo `.prettierrc`. Aqui configuro a largura de código e para formatação d
   "printWidth": 120
 }
 ```
+
+# Metadados do saleforce
+
+LWC - Pacote de componentes da Web Lightning

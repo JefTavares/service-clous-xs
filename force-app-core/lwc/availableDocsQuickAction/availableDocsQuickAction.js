@@ -157,10 +157,7 @@ export default class AvailableDocsQuickAction extends LightningElement {
           emptyFields.push("ID da Apólice");
         }
 
-        if (
-          this.codigoModuloProduto === undefined ||
-          this.codigoModuloProduto === null
-        ) {
+        if (this.codigoModuloProduto === undefined || this.codigoModuloProduto === null) {
           emptyFields.push("Módulo do Produto");
         }
 
@@ -188,37 +185,33 @@ export default class AvailableDocsQuickAction extends LightningElement {
               this._afinidadesData = { ...result };
 
               if (this._afinidadesData && this._afinidadesData?.documentos) {
-                this._afinidadesDocs = this._afinidadesData.documentos.map(
-                  (elem) => {
-                    let tmp = { ...elem };
-                    tmp.enabled = false;
+                this._afinidadesDocs = this._afinidadesData.documentos.map((elem) => {
+                  let tmp = { ...elem };
+                  tmp.id = Number(tmp.id ?? tmp.idDocumento);
+                  tmp.enabled = false;
 
-                    if (tmp.carteirinha === "N") {
-                      tmp.carteirinhaLabel = "Não";
-                    } else if (tmp.carteirinha === "S") {
-                      tmp.carteirinhaLabel = "Sim";
-                    }
-
-                    tmp.eventDescription = this.getAfinidadesEventDescription(
-                      tmp.idDocumento
-                    );
-
-                    return tmp;
+                  if (tmp.carteirinha === "N") {
+                    tmp.carteirinhaLabel = "Não";
+                  } else if (tmp.carteirinha === "S") {
+                    tmp.carteirinhaLabel = "Sim";
                   }
-                );
+
+                  tmp.eventDescription = this.getAfinidadesEventDescription(tmp.idDocumento);
+
+                  return tmp;
+                });
 
                 this._afinidadesData.documentos = this._afinidadesDocs;
               }
 
               if (this._afinidadesData?.enderecos) {
-                this._afinidadesData.enderecos =
-                  this._afinidadesData.enderecos.map((elem, index) => {
-                    let tmp = { ...elem };
-                    tmp.id = index;
-                    tmp.label = `Endereço ${index + 1}`;
-                    tmp.class = `slds-form address-section-${index}`;
-                    return tmp;
-                  });
+                this._afinidadesData.enderecos = this._afinidadesData.enderecos.map((elem, index) => {
+                  let tmp = { ...elem };
+                  tmp.id = index;
+                  tmp.label = `Endereço ${index + 1}`;
+                  tmp.class = `slds-form address-section-${index}`;
+                  return tmp;
+                });
               }
 
               this._isLoading = false;
@@ -243,27 +236,30 @@ export default class AvailableDocsQuickAction extends LightningElement {
   }
 
   handleMassificadosDocSelection(event) {
-    this._massificadosDocs.find(
-      (item) => item.id === event.target.dataset.id
-    ).enabled = event.target.checked;
+    const docId = Number(event.target.dataset.id);
+    const doc = this._massificadosDocs.find((item) => item.id === docId);
+
+    if (doc) {
+      doc.enabled = event.target.checked;
+    }
   }
 
   get getDocsMassificadosSelecionados() {
-    return (
-      this._massificadosDocs
-        .filter((item) => item.enabled)
-        .map((item) => item.label) || null
-    );
+    return this._massificadosDocs.filter((item) => item.enabled).map((item) => item.label) || null;
   }
 
   handleAfinidadesDocSelection(event) {
-    this._afinidadesDocs.find(
-      (item) => item.id === event.target.dataset.id
-    ).enabled = event.target.checked;
+    const docId = Number(event.currentTarget?.dataset?.id ?? event.target?.dataset?.id);
+    const doc = this._afinidadesDocs.find((item) => Number(item.id ?? item.idDocumento) === docId);
+
+    if (doc) {
+      doc.enabled = event.target.checked;
+    }
   }
 
   get getDocsAfinidadesSelecionados() {
-    return this._afinidadesDocs.filter((item) => item.enabled) || null;
+    const selectedDocs = (this._afinidadesDocs || []).filter((item) => item.enabled);
+    return selectedDocs;
   }
 
   handleRequestDocs() {
@@ -284,23 +280,28 @@ export default class AvailableDocsQuickAction extends LightningElement {
             if (doc.enabled && doc.label === "Apólice") {
               this._isLoading = true;
               let tipoDoc = "APOLICE";
-              let idepol = this.idApolice;
 
-              if (
-                this.endosso !== 0 &&
-                this.endosso !== "" &&
-                this.endosso !== null &&
-                this.endosso !== undefined
-              ) {
-                tipoDoc = "ENDOSSO";
-                idepol = this.endosso;
-              }
+              console.log("this.idApolice", this.idApolice);
+              console.log("this.endosso", this.endosso);
+              console.log("this.item", this.item);
+              console.log("this.numeroOperador", this.numeroOperador);
+              console.log("this.codigoModuloProduto", this.codigoModuloProduto);
+              console.log("emailAddress.value", emailAddress.value);
+              console.log("tipoDoc", tipoDoc);
+
+              // if (this.endosso !== 0 && this.endosso !== "" && this.endosso !== null && this.endosso !== undefined) {
+              //   tipoDoc = "ENDOSSO";
+              //   idepol = this.endosso;
+              // }
+
+              let codModProd = String(this.codigoModuloProduto);
+              console.log("codModProd", codModProd);
 
               getDuplicatePolicy({
-                idepol: idepol,
+                idepol: this.idApolice,
                 numCert: this.item,
                 numOper: this.numeroOperador,
-                moduloProduto: this.moduloProduto,
+                moduloProduto: codModProd,
                 mail: emailAddress.value,
                 tipoDoc: tipoDoc
               })
@@ -309,8 +310,7 @@ export default class AvailableDocsQuickAction extends LightningElement {
                     this.dispatchEvent(
                       new ShowToastEvent({
                         title: "Documentos Disponíveis",
-                        message:
-                          "Documento solicitado e enviado para o e-mail com sucesso!",
+                        message: "Documento solicitado e enviado para o e-mail com sucesso!",
                         variant: "success"
                       })
                     );
@@ -319,8 +319,7 @@ export default class AvailableDocsQuickAction extends LightningElement {
                     this.dispatchEvent(
                       new ShowToastEvent({
                         title: "Documentos Disponíveis",
-                        message:
-                          "Falha ao buscar documento da apólice. Sistema externo indisponível no momento.",
+                        message: "Falha ao buscar documento da apólice. Sistema externo indisponível no momento.",
                         variant: "warning",
                         mode: "sticky"
                       })
@@ -335,8 +334,7 @@ export default class AvailableDocsQuickAction extends LightningElement {
                   this.dispatchEvent(
                     new ShowToastEvent({
                       title: "Erro ao consultar documento",
-                      message:
-                        "Falha ao buscar documento da apólice. Sistema externo indisponível no momento.",
+                      message: "Falha ao buscar documento da apólice. Sistema externo indisponível no momento.",
                       variant: "warning",
                       mode: "sticky"
                     })
@@ -448,8 +446,7 @@ export default class AvailableDocsQuickAction extends LightningElement {
             confirmacaoRequest.meioEnvio = "CORREIO";
             confirmacaoRequest.responsavel = "";
             confirmacaoRequest.somenteCartao = doc.carteirinha;
-            confirmacaoRequest.motivoSegundaVia =
-              this._afinidadesSelectedSendReasons;
+            confirmacaoRequest.motivoSegundaVia = this._afinidadesSelectedSendReasons;
             confirmacaoRequest.usuarioSolicitacao = this.alias;
             confirmacaoRequest.idKit = Number(doc.id);
             confirmacaoRequest.idSegurado = Number(this.numeroSegurado);
@@ -468,20 +465,18 @@ export default class AvailableDocsQuickAction extends LightningElement {
                 let response = result;
 
                 if (response && response?.return_x?.erro) {
-                  let errorMessage = response?.return_x?.inconsistencias.map(
-                    (elem) => {
-                      this.dispatchEvent(
-                        new ShowToastEvent({
-                          title: "Documentos Disponíveis",
-                          message: `O campo ${elem.campo} possui um valor inválido. Detalhes do erro: ${elem.mensagem}`,
-                          variant: "warning",
-                          mode: "sticky"
-                        })
-                      );
+                  let errorMessage = response?.return_x?.inconsistencias.map((elem) => {
+                    this.dispatchEvent(
+                      new ShowToastEvent({
+                        title: "Documentos Disponíveis",
+                        message: `O campo ${elem.campo} possui um valor inválido. Detalhes do erro: ${elem.mensagem}`,
+                        variant: "warning",
+                        mode: "sticky"
+                      })
+                    );
 
-                      return `O campo ${elem.campo} possui um valor inválido. Detalhes do erro: ${elem.mensagem}`;
-                    }
-                  );
+                    return `O campo ${elem.campo} possui um valor inválido. Detalhes do erro: ${elem.mensagem}`;
+                  });
                   console.log(errorMessage);
                 } else if (response && !response?.return_x?.erro) {
                   this.dispatchEvent(
@@ -512,13 +507,9 @@ export default class AvailableDocsQuickAction extends LightningElement {
 
   handleSelectAddress(event) {
     let selectedAddress = event.target.dataset.id;
-    let addressSection = this.template.querySelector(
-      `.address-section-${selectedAddress}`
-    );
+    let addressSection = this.template.querySelector(`.address-section-${selectedAddress}`);
 
-    let allSelectAddressButtons = this.template.querySelectorAll(
-      ".select-address-button"
-    );
+    let allSelectAddressButtons = this.template.querySelectorAll(".select-address-button");
     allSelectAddressButtons.forEach((customBtn) => {
       customBtn.innerHTML =
         '<button class="slds-button slds-button_brand" aria-disabled="false" type="button">Selecionar</button>';
@@ -539,10 +530,8 @@ export default class AvailableDocsQuickAction extends LightningElement {
     this._selectedAddress = {};
 
     if (
-      this._afinidadesData.enderecos[selectedAddress].logradouro !==
-        logradouro ||
-      this._afinidadesData.enderecos[selectedAddress].complemento !==
-        complemento ||
+      this._afinidadesData.enderecos[selectedAddress].logradouro !== logradouro ||
+      this._afinidadesData.enderecos[selectedAddress].complemento !== complemento ||
       this._afinidadesData.enderecos[selectedAddress].cidade !== cidade ||
       this._afinidadesData.enderecos[selectedAddress].bairro !== bairro ||
       this._afinidadesData.enderecos[selectedAddress].numero !== numero ||
