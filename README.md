@@ -137,6 +137,8 @@ Arquivo `.prettierrc`. Aqui configuro a largura de código e para formatação d
 }
 ```
 
-# Metadados do saleforce
+## Metadados do Salesforce
 
-LWC - Pacote de componentes da Web Lightning
+LWC - Pacote de componentes da Web Lightning - LightningComponentBundle
+
+Aura Component - Nao peguei - AuraDefinitionBundle
